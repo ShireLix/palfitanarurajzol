@@ -1,0 +1,1270 @@
+/* ==========================================================================
+   Rajzolj és Emlékezz! – Kahoot! által inspirált modern stíluslap
+   ========================================================================== */
+
+:root {
+  /* Színpaletta */
+  --bg-gradient-start: #2c0b56;
+  --bg-gradient-end: #46178f;
+  
+  --kahoot-purple: #46178f;
+  --kahoot-dark-purple: #320c6b;
+  --kahoot-red: #e21b3c;
+  --kahoot-red-dark: #b80f2b;
+  --kahoot-blue: #1368ce;
+  --kahoot-blue-dark: #0b4994;
+  --kahoot-yellow: #ffa602;
+  --kahoot-yellow-dark: #c98200;
+  --kahoot-green: #26890c;
+  --kahoot-green-dark: #1b6307;
+  
+  --card-bg: #ffffff;
+  --card-border: #f0f0f5;
+  --text-dark: #22223b;
+  --text-muted: #6c757d;
+  --text-light: #ffffff;
+  
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.16);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.28);
+  
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-full: 9999px;
+  
+  --font-heading: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  background: radial-gradient(circle at 50% 20%, #561baf 0%, var(--bg-gradient-start) 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* ==========================================================================
+   Lebegő geometriai háttérelemek
+   ========================================================================== */
+.bg-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  opacity: 0.12;
+  animation: floatShape 20s infinite ease-in-out alternate;
+}
+
+.shape-circle {
+  border-radius: 50%;
+  background: var(--kahoot-yellow);
+}
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 35px solid transparent;
+  border-right: 35px solid transparent;
+  border-bottom: 60px solid var(--kahoot-red);
+}
+.shape-diamond {
+  width: 50px;
+  height: 50px;
+  background: var(--kahoot-blue);
+  transform: rotate(45deg);
+}
+.shape-square {
+  width: 55px;
+  height: 55px;
+  background: var(--kahoot-green);
+  border-radius: 12px;
+}
+
+.c1 { width: 90px; height: 90px; top: 10%; left: 8%; animation-duration: 25s; }
+.t1 { top: 25%; right: 12%; animation-duration: 22s; }
+.d1 { top: 65%; left: 5%; animation-duration: 28s; }
+.s1 { bottom: 15%; right: 8%; animation-duration: 20s; }
+.c2 { width: 60px; height: 60px; top: 80%; left: 45%; animation-duration: 18s; }
+.t2 { top: 40%; left: 22%; animation-duration: 30s; }
+.d2 { top: 15%; right: 35%; animation-duration: 24s; }
+
+@keyframes floatShape {
+  0% { transform: translateY(0px) rotate(0deg) scale(1); }
+  50% { transform: translateY(-30px) rotate(180deg) scale(1.1); }
+  100% { transform: translateY(20px) rotate(360deg) scale(0.95); }
+}
+
+/* ==========================================================================
+   Fejléc & Logo & Nehézség Pill
+   ========================================================================== */
+.app-header {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 920px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-light);
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.logo-icon {
+  font-size: 1.7rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-diff-pill {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.diff-easy {
+  background: #16a34a;
+}
+.diff-normal {
+  background: var(--kahoot-blue);
+}
+.diff-extreme {
+  background: var(--kahoot-red);
+  animation: pulseExtreme 1.5s infinite alternate;
+}
+
+@keyframes pulseExtreme {
+  from { box-shadow: 0 0 8px rgba(226, 27, 60, 0.6); }
+  to { box-shadow: 0 0 16px rgba(226, 27, 60, 1); }
+}
+
+.btn-icon {
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  border-radius: var(--radius-full);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.08);
+}
+
+/* ==========================================================================
+   Fő Konténer & Nézetkezelés
+   ========================================================================== */
+.game-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 920px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px 40px;
+}
+
+.view {
+  display: none;
+  width: 100%;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.view.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   Kahoot! Gombok és Kártyák (3D hatás)
+   ========================================================================== */
+.btn-kahoot {
+  font-family: var(--font-heading);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--kahoot-yellow);
+  color: #111;
+  font-size: 1.6rem;
+  font-weight: 700;
+  padding: 16px 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 0 var(--kahoot-yellow-dark), var(--shadow-md);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.btn-kahoot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 var(--kahoot-yellow-dark), var(--shadow-lg);
+}
+
+.btn-kahoot:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--kahoot-yellow-dark);
+}
+
+.btn-kahoot .btn-sub {
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  font-weight: 800;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+.btn-kahoot.btn-blue {
+  background-color: var(--kahoot-blue);
+  color: #fff;
+  box-shadow: 0 6px 0 var(--kahoot-blue-dark), var(--shadow-md);
+}
+.btn-kahoot.btn-blue:hover {
+  box-shadow: 0 8px 0 var(--kahoot-blue-dark), var(--shadow-lg);
+}
+.btn-kahoot.btn-blue:active {
+  box-shadow: 0 2px 0 var(--kahoot-blue-dark);
+}
+
+.btn-kahoot.btn-green {
+  background-color: var(--kahoot-green);
+  color: #fff;
+  box-shadow: 0 6px 0 var(--kahoot-green-dark), var(--shadow-md);
+}
+.btn-kahoot.btn-green:hover {
+  box-shadow: 0 8px 0 var(--kahoot-green-dark), var(--shadow-lg);
+}
+.btn-kahoot.btn-green:active {
+  box-shadow: 0 2px 0 var(--kahoot-green-dark);
+}
+
+.btn-pulse {
+  animation: pulseButton 2s infinite ease-in-out;
+}
+
+@keyframes pulseButton {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); box-shadow: 0 8px 0 var(--kahoot-yellow-dark), 0 0 24px rgba(255, 166, 2, 0.6); }
+  100% { transform: scale(1); }
+}
+
+.btn-secondary {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.95rem;
+  background: #f1f3f5;
+  border: 2px solid #dee2e6;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  color: #495057;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+  color: #212529;
+  border-color: #ced4da;
+}
+
+/* ==========================================================================
+   1. FŐMENÜ NÉZET ÉS NEHÉZSÉG VÁLASZTÓ
+   ========================================================================== */
+.menu-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.badge-tag {
+  background: rgba(70, 23, 143, 0.1);
+  color: var(--kahoot-purple);
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 14px;
+}
+
+.main-title {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 24px;
+  color: var(--text-dark);
+}
+
+.title-word {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.t-blue { color: var(--kahoot-blue); }
+.t-yellow { color: #d97706; }
+
+/* Nehézségi szint választó rács */
+.difficulty-section {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.difficulty-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.difficulty-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.diff-card {
+  background: #f8fafc;
+  border: 3px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 18px 14px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 5px 0 #cbd5e1;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.diff-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #cbd5e1;
+}
+
+.diff-card:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #cbd5e1;
+}
+
+.diff-badge {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
+}
+
+.diff-name {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.diff-specs {
+  list-style: none;
+  font-size: 0.85rem;
+  color: #4a5568;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Könnyű stílus */
+.diff-card.diff-easy .diff-badge { background: #dcfce7; color: #15803d; }
+.diff-card.diff-easy.active {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  box-shadow: 0 6px 0 #16a34a, 0 0 16px rgba(34, 197, 94, 0.3);
+  transform: translateY(-2px);
+}
+.diff-card.diff-easy.active .diff-name { color: #15803d; }
+
+/* Normál stílus */
+.diff-card.diff-normal .diff-badge { background: #eff6ff; color: #1d4ed8; }
+.diff-card.diff-normal.active {
+  border-color: var(--kahoot-blue);
+  background: #f0f7ff;
+  box-shadow: 0 6px 0 var(--kahoot-blue-dark), 0 0 16px rgba(19, 104, 206, 0.3);
+  transform: translateY(-2px);
+}
+.diff-card.diff-normal.active .diff-name { color: var(--kahoot-blue); }
+
+/* Extrém stílus */
+.diff-card.diff-extreme .diff-badge { background: #fee2e2; color: #b91c1c; }
+.diff-card.diff-extreme.active {
+  border-color: var(--kahoot-red);
+  background: #fff5f5;
+  box-shadow: 0 6px 0 var(--kahoot-red-dark), 0 0 20px rgba(226, 27, 60, 0.4);
+  transform: translateY(-2px);
+}
+.diff-card.diff-extreme.active .diff-name { color: var(--kahoot-red); }
+
+/* ==========================================================================
+   2. 3-2-1 VISSZASZÁMLÁLÁS NÉZET
+   ========================================================================== */
+.countdown-wrap {
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.countdown-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  color: #fff;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  margin-bottom: 24px;
+}
+
+.countdown-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  box-shadow: 0 10px 0 #d97706, 0 0 40px rgba(255, 166, 2, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.countdown-number {
+  font-family: var(--font-heading);
+  font-size: 6.5rem;
+  font-weight: 700;
+  color: var(--kahoot-red);
+  line-height: 1;
+}
+
+.countdown-number.pop {
+  animation: numberPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes numberPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.countdown-hint {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ==========================================================================
+   3. RAJZOLÁSI FÁZIS ÉS KURZOR LÁTHATÓSÁG
+   ========================================================================== */
+.game-header-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.round-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.round-label {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 1px;
+}
+
+.round-badge {
+  background: var(--card-bg);
+  color: var(--kahoot-purple);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+}
+
+.target-word-card {
+  flex: 1;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 8px 18px;
+  text-align: center;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.15), var(--shadow-md);
+}
+
+.word-prefix {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+.target-word {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--kahoot-red);
+  line-height: 1.2;
+}
+
+.timer-box {
+  background: var(--kahoot-yellow);
+  color: #111;
+  border-radius: var(--radius-md);
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 5px 0 var(--kahoot-yellow-dark);
+  min-width: 100px;
+  justify-content: center;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.timer-box.urgent {
+  background: var(--kahoot-red);
+  box-shadow: 0 5px 0 var(--kahoot-red-dark);
+  color: #fff;
+  animation: urgentBeat 0.4s infinite alternate;
+}
+
+@keyframes urgentBeat {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+.timer-text {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.timer-bar-container {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.timer-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #facc15);
+  border-radius: var(--radius-full);
+  transform-origin: left;
+  transition: width 0.05s linear, background-color 0.3s;
+}
+
+.timer-bar.urgent {
+  background: #ef4444;
+}
+
+/* ==========================================================================
+   VÁSZON ÉS INVERZ KURZOR KEZELÉS
+   "fehér alapon fekete, fekete alapon fehér kurzor"
+   ========================================================================== */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 0 rgba(0,0,0,0.2), var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  transition: background-color 0.2s ease;
+}
+
+.canvas-wrapper.dark-board {
+  background: #18181b;
+}
+
+#drawing-canvas {
+  width: 100%;
+  height: 420px;
+  display: block;
+}
+
+/* 1. Kurzor fehér háttérnél: FEKETE célkereszt és pont */
+.canvas-wrapper.cursor-light-bg,
+.canvas-wrapper.cursor-light-bg #drawing-canvas {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4' fill='%23111111' stroke='%23ffffff' stroke-width='1.5'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4' stroke='%23111111' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, crosshair;
+}
+
+/* 2. Kurzor fekete háttérnél: FEHÉR célkereszt és pont */
+.canvas-wrapper.cursor-dark-bg,
+.canvas-wrapper.cursor-dark-bg #drawing-canvas {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4' fill='%23ffffff' stroke='%23111111' stroke-width='1.5'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, crosshair;
+}
+
+/* 3. Dinamikus inverz lebegő ecset-reticle a canvas felett (mix-blend-mode: difference) */
+.canvas-brush-cursor {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.1s ease, width 0.1s, height 0.1s;
+  mix-blend-mode: difference;
+  background-color: #ffffff; /* fehér felületen fekete lesz, feketén fehér! */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.canvas-brush-cursor.visible {
+  opacity: 1;
+}
+
+.canvas-blocked-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(226, 27, 60, 0.88);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+  z-index: 20;
+}
+
+.canvas-blocked-overlay.active {
+  display: flex;
+}
+
+/* Rajzeszköztár */
+.drawing-tools {
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  margin-top: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.tool-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-label {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.color-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--c);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.color-btn:hover {
+  transform: scale(1.15);
+}
+
+.color-btn.active {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 3px var(--kahoot-yellow), 0 3px 6px rgba(0,0,0,0.3);
+}
+
+.size-btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 800;
+  background: #f1f3f5;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #495057;
+  transition: all 0.15s ease;
+}
+
+.size-btn:hover {
+  background: #e9ecef;
+}
+
+.size-btn.active {
+  background: var(--kahoot-purple);
+  color: #fff;
+  border-color: var(--kahoot-dark-purple);
+}
+
+.extreme-pill {
+  font-size: 0.85rem;
+  font-weight: 900;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+}
+
+/* ==========================================================================
+   4. ÁTVEZETŐ KÉPERNYŐ
+   ========================================================================== */
+.transition-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.celebrate-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  animation: bounce 1s infinite alternate ease-in-out;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-12px); }
+}
+
+.transition-card h2 {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  color: var(--kahoot-purple);
+  margin-bottom: 14px;
+}
+
+.transition-desc {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+}
+
+.transition-countdown {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.transition-countdown strong {
+  font-size: 1.8rem;
+  color: var(--kahoot-red);
+  font-family: var(--font-heading);
+}
+
+/* ==========================================================================
+   5. KITALÁLÓS FÁZIS
+   ========================================================================== */
+.guessing-prompt h3 {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.guess-drawing-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.guess-canvas-frame {
+  width: 100%;
+  max-width: 620px;
+  height: 380px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 0 rgba(0,0,0,0.2), var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.guess-canvas-frame img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+
+.guess-form-container {
+  width: 100%;
+  max-width: 620px;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.input-wrapper input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 14px 20px;
+  border: 3px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--text-dark);
+  outline: none;
+  box-shadow: 0 4px 0 #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--kahoot-blue);
+  box-shadow: 0 4px 0 var(--kahoot-blue-dark), 0 0 0 4px rgba(19, 104, 206, 0.2);
+}
+
+.input-wrapper .btn-kahoot {
+  padding: 14px 28px;
+  font-size: 1.25rem;
+  white-space: nowrap;
+}
+
+.guess-help-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s, background 0.2s;
+}
+
+.btn-text-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================================================
+   6. ÖSSZESÍTÉS ÉS EREDMÉNYEK
+   ========================================================================== */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.results-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-banner-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.trophy-badge {
+  font-size: 4rem;
+  margin-bottom: 10px;
+  display: inline-block;
+  animation: tada 1.2s ease-in-out;
+}
+
+@keyframes tada {
+  0% { transform: scale(1); }
+  10%, 20% { transform: scale(0.9) rotate(-3deg); }
+  30%, 50%, 70%, 90% { transform: scale(1.1) rotate(3deg); }
+  40%, 60%, 80% { transform: scale(1.1) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.score-title {
+  font-family: var(--font-heading);
+  font-size: 2.3rem;
+  color: var(--kahoot-purple);
+  margin-bottom: 6px;
+}
+
+.rank-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #d97706;
+  margin-bottom: 24px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-pill {
+  padding: 16px 12px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-correct {
+  background: #eaffea;
+  border-bottom: 5px solid #22c55e;
+}
+.stat-correct .stat-num { color: #15803d; }
+
+.stat-wrong {
+  background: #ffebeb;
+  border-bottom: 5px solid #ef4444;
+}
+.stat-wrong .stat-num { color: #b91c1c; }
+
+.stat-percent {
+  background: #eff6ff;
+  border-bottom: 5px solid #3b82f6;
+}
+.stat-percent .stat-num { color: #1d4ed8; }
+
+.stat-num {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-desc {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Galéria rács */
+.gallery-section {
+  width: 100%;
+}
+
+.gallery-title {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  width: 100%;
+}
+
+.result-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  border: 3px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.result-card.is-correct {
+  border-color: #22c55e;
+}
+
+.result-card.is-wrong {
+  border-color: #ef4444;
+}
+
+.card-header-status {
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+.result-card.is-correct .card-header-status {
+  background: #eaffea;
+  color: #15803d;
+}
+
+.result-card.is-wrong .card-header-status {
+  background: #ffebeb;
+  color: #b91c1c;
+}
+
+.card-img-wrap {
+  width: 100%;
+  height: 160px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 6px;
+}
+
+.card-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.card-details {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-row {
+  font-size: 0.9rem;
+}
+
+.detail-label {
+  font-weight: 800;
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.detail-val-target {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--kahoot-purple);
+}
+
+.detail-val-guess {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.result-card.is-correct .detail-val-guess {
+  color: #15803d;
+}
+
+.result-card.is-wrong .detail-val-guess {
+  color: #b91c1c;
+}
+
+.results-footer-action {
+  margin-top: 36px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Reszponzivitás (mobil, tablet)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 12px 16px;
+  }
+  .header-logo {
+    font-size: 1.25rem;
+  }
+  .main-title {
+    font-size: 1.9rem;
+  }
+  .difficulty-selector {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .btn-kahoot {
+    width: 100%;
+    font-size: 1.4rem;
+    padding: 14px 20px;
+  }
+  #drawing-canvas {
+    height: 320px;
+  }
+  .guess-canvas-frame {
+    height: 280px;
+  }
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .input-wrapper {
+    flex-direction: column;
+  }
+  .input-wrapper .btn-kahoot {
+    width: 100%;
+  }
+  .game-header-bar {
+    flex-wrap: wrap;
+  }
+  .target-word-card {
+    order: 3;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  #drawing-canvas {
+    height: 280px;
+  }
+  .guess-canvas-frame {
+    height: 230px;
+  }
+  .target-word {
+    font-size: 1.5rem;
+  }
+}

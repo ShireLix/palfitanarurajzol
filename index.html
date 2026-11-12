@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rajzolj és Emlékezz! – 5 Másodperces Rajzolós Játék</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Háttér animált geometriai elemek (Kahoot stílusban) -->
+  <div class="bg-shapes" aria-hidden="true">
+    <div class="shape shape-circle c1"></div>
+    <div class="shape shape-triangle t1"></div>
+    <div class="shape shape-diamond d1"></div>
+    <div class="shape shape-square s1"></div>
+    <div class="shape shape-circle c2"></div>
+    <div class="shape shape-triangle t2"></div>
+    <div class="shape shape-diamond d2"></div>
+  </div>
+
+  <!-- Fejléc / Globális vezérlők -->
+  <header class="app-header">
+    <div class="header-logo" id="header-logo">
+      <span class="logo-icon">🎨</span>
+      <span class="logo-text">Rajzolj & Emlékezz!</span>
+    </div>
+    <div class="header-actions">
+      <div id="header-difficulty-badge" class="header-diff-pill diff-normal">Normál</div>
+      <button id="btn-sound-toggle" class="btn-icon" title="Hang ki/be" aria-label="Hang némítása vagy engedélyezése">
+        <span id="sound-icon">🔊</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="game-container">
+    
+    <!-- ==============================================
+         1. FŐMENÜ KÉPERNYŐ
+         ============================================== -->
+    <section id="view-menu" class="view active">
+      <div class="menu-card">
+        <div class="badge-tag">⚡ VILLÁMGYORS MEMÓRIAJÁTÉK</div>
+        <h1 class="main-title">
+          <span class="title-word t-blue">Rajzolj</span> villámgyorsan,
+          <br>majd <span class="title-word t-yellow">Találd ki!</span>
+        </h1>
+
+        <!-- Nehézségi szint választó -->
+        <div class="difficulty-section">
+          <div class="difficulty-title">Válassz nehézségi szintet:</div>
+          <div class="difficulty-selector">
+            
+            <button type="button" class="diff-card diff-easy" data-difficulty="easy">
+              <div class="diff-badge">🍰 KEZDŐ</div>
+              <div class="diff-name">Könnyű</div>
+              <ul class="diff-specs">
+                <li>⏱️ <strong>10 mp</strong> / rajz</li>
+                <li>🔢 <strong>5 rajz</strong> összesen</li>
+                <li>🎨 Színek engedélyezve</li>
+                <li>📋 Sorban jönnek vissza</li>
+              </ul>
+            </button>
+
+            <button type="button" class="diff-card diff-normal active" data-difficulty="normal">
+              <div class="diff-badge">⭐ AJÁNLOTT</div>
+              <div class="diff-name">Normál</div>
+              <ul class="diff-specs">
+                <li>⏱️ <strong>5 mp</strong> / rajz</li>
+                <li>🔢 <strong>15 rajz</strong> összesen</li>
+                <li>🎨 Színek engedélyezve</li>
+                <li>📋 Sorban jönnek vissza</li>
+              </ul>
+            </button>
+
+            <button type="button" class="diff-card diff-extreme" data-difficulty="extreme">
+              <div class="diff-badge">🔥 HARDCORE</div>
+              <div class="diff-name">Extrém</div>
+              <ul class="diff-specs">
+                <li>⏱️ <strong>2 mp</strong> / rajz!</li>
+                <li>🔢 <strong>15 rajz</strong> összesen</li>
+                <li>🚫 <strong>Nincs szín!</strong></li>
+                <li>🔀 <strong>Kevert rajzok!</strong></li>
+              </ul>
+            </button>
+
+          </div>
+        </div>
+
+        <button id="btn-start-game" class="btn-kahoot btn-pulse">
+          <span class="btn-text">MEHET!</span>
+          <span class="btn-sub" id="btn-start-sub">Normál játékmód indítása 🚀</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         2. 3-2-1 VISSZASZÁMLÁLÁS
+         ============================================== -->
+    <section id="view-countdown" class="view">
+      <div class="countdown-wrap">
+        <h2 class="countdown-title">Készülj fel az 1. körre!</h2>
+        <div class="countdown-circle">
+          <div id="countdown-number" class="countdown-number">3</div>
+        </div>
+        <p class="countdown-hint" id="countdown-hint-text">5 másodperced lesz a rajzolásra!</p>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         3. RAJZOLÁSI FÁZIS
+         ============================================== -->
+    <section id="view-drawing" class="view">
+      <div class="game-header-bar">
+        <div class="round-indicator">
+          <span class="round-label">KÖR</span>
+          <span id="draw-round-number" class="round-badge">1 / 15</span>
+        </div>
+        
+        <!-- Feladvány szó -->
+        <div class="target-word-card">
+          <span class="word-prefix">Rajzold le gyorsan:</span>
+          <h2 id="draw-target-word" class="target-word">Mikró</h2>
+        </div>
+
+        <!-- Időzítő -->
+        <div class="timer-box" id="draw-timer-box">
+          <span class="timer-icon">⏳</span>
+          <span id="draw-timer-text" class="timer-text">5.0</span>
+        </div>
+      </div>
+
+      <!-- Időzítő progress sáv -->
+      <div class="timer-bar-container">
+        <div id="draw-timer-bar" class="timer-bar"></div>
+      </div>
+
+      <!-- Rajzvászon doboz -->
+      <div class="canvas-wrapper cursor-light-bg" id="canvas-wrapper">
+        <canvas id="drawing-canvas" width="600" height="420"></canvas>
+        
+        <!-- Dinamikus inverz ecset jelző (fehér háttéren fekete, feketén fehér!) -->
+        <div id="canvas-brush-cursor" class="canvas-brush-cursor"></div>
+
+        <div id="draw-overlay-blocked" class="canvas-blocked-overlay">
+          <span>⏰ IDŐ LEJÁRT! MENTÉS...</span>
+        </div>
+      </div>
+
+      <!-- Rajzeszköztár -->
+      <div class="drawing-tools" id="drawing-tools">
+        
+        <!-- Színek csoport (Extrém módban elrejtve) -->
+        <div class="tool-group" id="tool-group-colors">
+          <span class="tool-label">Szín:</span>
+          <button class="color-btn active" data-color="#111111" style="--c: #111111;" title="Fekete" aria-label="Fekete szín"></button>
+          <button class="color-btn" data-color="#E21B3C" style="--c: #E21B3C;" title="Piros" aria-label="Piros szín"></button>
+          <button class="color-btn" data-color="#1368CE" style="--c: #1368CE;" title="Kék" aria-label="Kék szín"></button>
+          <button class="color-btn" data-color="#26890C" style="--c: #26890C;" title="Zöld" aria-label="Zöld szín"></button>
+        </div>
+
+        <!-- Extrém mód figyelmeztetés a színek helyett -->
+        <div class="tool-group tool-extreme-notice" id="tool-extreme-notice" style="display: none;">
+          <span class="extreme-pill">⚠️ EXTRÉM MÓD: Nincs színválasztás! (2 mp)</span>
+        </div>
+
+        <!-- Vonalvastagság -->
+        <div class="tool-group" id="tool-group-sizes">
+          <span class="tool-label">Vastagság:</span>
+          <button class="size-btn" data-size="4" title="Vékony">● Vékony</button>
+          <button class="size-btn active" data-size="8" title="Közepes">●● Normál</button>
+          <button class="size-btn" data-size="14" title="Vastag">●●● Vastag</button>
+        </div>
+
+        <!-- Vászon Háttér Váltó: Fehér alapon fekete kurzor, Fekete alapon fehér kurzor! -->
+        <div class="tool-group">
+          <button id="btn-toggle-canvas-bg" class="btn-secondary" title="Vászon háttér váltása (Fehér / Fekete)">
+            <span id="canvas-bg-icon">⬛</span> <span id="canvas-bg-label">Fekete tábla</span>
+          </button>
+          <button id="btn-clear-canvas" class="btn-secondary" title="Vászon törlése">
+            🗑️ Törlés
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==============================================
+         4. ÁTVEZETŐ KÉPERNYŐ A KÉT FÁZIS KÖZÖTT
+         ============================================== -->
+    <section id="view-transition" class="view">
+      <div class="transition-card">
+        <div class="celebrate-icon">🎉</div>
+        <h2>Minden rajz elkészült!</h2>
+        <p class="transition-desc" id="transition-desc">
+          Most következik a legizgalmasabb rész:
+          <br><strong>Nézd meg a saját rajzaidat, és találd ki, mit ábrázolnak!</strong>
+        </p>
+        <div class="transition-countdown">
+          <span>Kezdés automatikusan: </span>
+          <strong id="transition-timer">3</strong>
+        </div>
+        <button id="btn-skip-transition" class="btn-kahoot btn-blue">
+          AZONNAL KEZDJÜK! 🎯
+        </button>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         5. KITALÁLÓS FÁZIS
+         ============================================== -->
+    <section id="view-guessing" class="view">
+      <div class="game-header-bar">
+        <div class="round-indicator">
+          <span class="round-label">MEGFEJTÉS</span>
+          <span id="guess-round-number" class="round-badge">1 / 15</span>
+        </div>
+        <div class="guessing-prompt">
+          <h3 id="guessing-prompt-title">Emlékszel még, mi volt ez a feladat? 🤔</h3>
+        </div>
+      </div>
+
+      <!-- A korábban készített rajz előnézete -->
+      <div class="guess-drawing-container">
+        <div class="guess-canvas-frame" id="guess-canvas-frame">
+          <img id="guess-drawing-img" src="" alt="A te rajzod">
+        </div>
+      </div>
+
+      <!-- Válasz beviteli mező és gombok -->
+      <div class="guess-form-container">
+        <form id="guess-form" onsubmit="return false;">
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="guess-input" 
+              placeholder="Írd be a szót, amit lerajzoltál..." 
+              autocomplete="off" 
+              autofocus 
+            />
+            <button type="submit" id="btn-submit-guess" class="btn-kahoot btn-green">
+              Beküldés ↵
+            </button>
+          </div>
+          <div class="guess-help-row">
+            <button type="button" id="btn-pass-guess" class="btn-text-link">
+              Nem jut eszembe (Passzolom) ⏩
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==============================================
+         6. ÖSSZESÍTÉS ÉS EREDMÉNYEK
+         ============================================== -->
+    <section id="view-results" class="view">
+      <canvas id="confetti-canvas"></canvas>
+
+      <div class="results-container">
+        
+        <!-- Felső összegző kártya -->
+        <div class="score-banner-card">
+          <div class="trophy-badge" id="results-badge-icon">🏆</div>
+          <h2 class="score-title">Játék vége!</h2>
+          <p id="results-rank-title" class="rank-title">Fantasztikus memória!</p>
+
+          <div class="stats-row">
+            <div class="stat-pill stat-correct">
+              <span class="stat-num" id="stat-correct-count">0</span>
+              <span class="stat-desc">Helyes válasz</span>
+            </div>
+            <div class="stat-pill stat-wrong">
+              <span class="stat-num" id="stat-wrong-count">0</span>
+              <span class="stat-desc">Helytelen</span>
+            </div>
+            <div class="stat-pill stat-percent">
+              <span class="stat-num" id="stat-percent-value">0%</span>
+              <span class="stat-desc">Sikerességi arány</span>
+            </div>
+          </div>
+
+          <button id="btn-restart-game" class="btn-kahoot btn-pulse">
+            🔄 ÚJ JÁTÉK INDÍTÁSA
+          </button>
+        </div>
+
+        <!-- Rajzok galériája -->
+        <div class="gallery-section">
+          <h3 class="gallery-title" id="gallery-title">A feladványok és rajzaid részletesen:</h3>
+          <div id="results-gallery-grid" class="gallery-grid">
+            <!-- Dinamikusan generált kártyák a game.js-ből -->
+          </div>
+        </div>
+
+        <div class="results-footer-action">
+          <button id="btn-restart-bottom" class="btn-kahoot">
+            🔄 Új játék indítása
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="words.js"></script>
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
